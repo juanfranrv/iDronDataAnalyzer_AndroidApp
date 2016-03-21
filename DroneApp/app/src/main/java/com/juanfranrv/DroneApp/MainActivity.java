@@ -50,14 +50,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private Drone drone;
-    private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
 
     private static final int DEFAULT_UDP_PORT = 14550;
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
 
-    private Spinner modeSelector;
     private Button startVideoStream;
     private Button stopVideoStream;
 
@@ -69,19 +67,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
         this.drone = new Drone(context);
-
-        this.modeSelector = (Spinner) findViewById(R.id.modeSelect);
-        this.modeSelector.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onFlightModeSelected(view);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         //Captura la foto usando la GoPro del drone
         final Button takePic = (Button) findViewById(R.id.take_photo_button);
@@ -153,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     public void onStart() {
         super.onStart();
         this.controlTower.connect(this);
-        updateVehicleModesForType(this.droneType);
     }
 
     @Override
@@ -193,31 +177,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.STATE_CONNECTED:
                 alertUser("Drone Conectado");
                 updateConnectedButton(this.drone.isConnected());
-                updateArmButton();
                 checkSoloState();
                 break;
 
             case AttributeEvent.STATE_DISCONNECTED:
                 alertUser("Drone Desconectado");
                 updateConnectedButton(this.drone.isConnected());
-                updateArmButton();
-                break;
-
-            case AttributeEvent.STATE_UPDATED:
-            case AttributeEvent.STATE_ARMING:
-                updateArmButton();
-                break;
-
-            case AttributeEvent.TYPE_UPDATED:
-                Type newDroneType = this.drone.getAttribute(AttributeType.TYPE);
-                if (newDroneType.getDroneType() != this.droneType) {
-                    this.droneType = newDroneType.getDroneType();
-                    updateVehicleModesForType(this.droneType);
-                }
-                break;
-
-            case AttributeEvent.STATE_VEHICLE_MODE:
-                updateVehicleMode();
                 break;
 
             case AttributeEvent.SPEED_UPDATED:
@@ -231,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.GPS_POSITION:
                 updateGPS();
                 break;
-
 
             default:
 //                Log.i("DRONE_EVENT", event); //Ver eventos del drone
@@ -282,79 +246,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     }
 
-    public void onFlightModeSelected(View view) {
-        VehicleMode vehicleMode = (VehicleMode) this.modeSelector.getSelectedItem();
-
-        VehicleApi.getApi(this.drone).setVehicleMode(vehicleMode, new AbstractCommandListener() {
-            @Override
-            public void onSuccess() {
-                alertUser("Modo vehículo cambiado correctamente.");
-            }
-
-            @Override
-            public void onError(int executionError) {
-                alertUser("Cambio modo vehículo fallido: " + executionError);
-            }
-
-            @Override
-            public void onTimeout() {
-                alertUser("Cambio modo vehículo timeout");
-            }
-        });
-    }
-
-    public void onArmButtonTap(View view) {
-        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-
-        if (vehicleState.isFlying()) {
-            // Aterrizaje
-            VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
-                @Override
-                public void onError(int executionError) {
-                    alertUser("No se permite aterrizar aqui.");
-                }
-
-                @Override
-                public void onTimeout() {
-                    alertUser("No se permite aterrizar aqui.");
-                }
-            });
-        } else if (vehicleState.isArmed()) {
-            // Despegue
-            ControlApi.getApi(this.drone).takeoff(10, new AbstractCommandListener() {
-
-                @Override
-                public void onSuccess() {
-                    alertUser("Despegando...");
-                }
-
-                @Override
-                public void onError(int i) {
-                    alertUser("No se permite despegar.");
-                }
-
-                @Override
-                public void onTimeout() {
-                    alertUser("No se permite despegar");
-                }
-            });
-        } else if (!vehicleState.isConnected()) {
-            alertUser("Conectarse al drone primero");
-        } else {
-            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
-                @Override
-                public void onError(int executionError) {
-                    alertUser("No se permite armar el vehículo.");
-                }
-
-                @Override
-                public void onTimeout() {
-                    alertUser("Operación de armado fallida");
-                }
-            });
-        }
-    }
-
     // UI updating
     // ==========================================================
 
@@ -364,28 +255,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             connectButton.setText("Desconectado");
         } else {
             connectButton.setText("Conectado");
-        }
-    }
-
-    protected void updateArmButton() {
-        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-        Button armButton = (Button) findViewById(R.id.btnArmTakeOff);
-
-        if (!this.drone.isConnected()) {
-            armButton.setVisibility(View.INVISIBLE);
-        } else {
-            armButton.setVisibility(View.VISIBLE);
-        }
-
-        if (vehicleState.isFlying()) {
-            // Aterrizaje
-            armButton.setText("ATERRIZAR");
-        } else if (vehicleState.isArmed()) {
-            // Despegue
-            armButton.setText("DESPEGUE");
-        } else if (vehicleState.isConnected()) {
-            // Conectado pero no armado
-            armButton.setText("ARMARSE");
         }
     }
 
@@ -409,22 +278,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
     }
 
-    protected void updateVehicleModesForType(int droneType) {
-
-        List<VehicleMode> vehicleModes = VehicleMode.getVehicleModePerDroneType(droneType);
-        ArrayAdapter<VehicleMode> vehicleModeArrayAdapter = new ArrayAdapter<VehicleMode>(this, android.R.layout.simple_spinner_item, vehicleModes);
-        vehicleModeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.modeSelector.setAdapter(vehicleModeArrayAdapter);
-    }
-
-    protected void updateVehicleMode() {
-        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-        VehicleMode vehicleMode = vehicleState.getVehicleMode();
-        ArrayAdapter arrayAdapter = (ArrayAdapter) this.modeSelector.getAdapter();
-        this.modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
-    }
-
-    // Helper methods
+    // Métodos de ayuda
     // ==========================================================
 
     protected void alertUser(String message) {

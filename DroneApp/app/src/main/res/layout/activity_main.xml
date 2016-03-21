@@ -87,34 +87,9 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/telemetryLabel"
-                    android:layout_marginTop="10dp">
-
-                    <TableRow
-                        android:id="@+id/vehTelemRow1"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent">
-
-                        <TextView
-                            android:id="@+id/vehicleModeLabelTextView"
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:layout_column="0"
-                            android:paddingBottom="5dp"
-                            android:paddingTop="5dp"
-                            android:text="Modo:"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                        <Spinner
-                            android:id="@+id/modeSelect"
-                            android:layout_width="fill_parent"
-                            android:layout_height="44dp"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_below="@+id/connectionTypeLabel"
-                            android:layout_column="1"
-                            android:layout_toLeftOf="@+id/btnConnect"
-                            android:spinnerMode="dropdown" />
-                    </TableRow>
+                    android:layout_marginTop="10dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true">
 
                     <TableRow
                         android:id="@+id/vehTelemRow2"
@@ -201,16 +176,6 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
 
-                        <Button
-                            android:id="@+id/btnArmTakeOff"
-                            android:layout_width="120dp"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_below="@+id/connectionTypeLabel"
-                            android:layout_column="1"
-                            android:onClick="onArmButtonTap"
-                            android:visibility="invisible" />
                     </TableRow>
 
                 </TableLayout>
