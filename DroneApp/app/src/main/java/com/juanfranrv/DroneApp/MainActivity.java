@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private String latitud, longitud, altura, velocidad;
     private Drone drone;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
@@ -63,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
@@ -233,6 +240,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             Spinner connectionSelector = (Spinner) findViewById(R.id.selectConnectionType);
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
 
+            //Enviar datos al servidor
+            httpHandler handler = new httpHandler();
+            handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", "12", "12", "10", "10");
+            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
+
             Bundle extraParams = new Bundle();
             if (selectedConnectionType == ConnectionType.TYPE_USB) {
                 extraParams.putInt(ConnectionType.EXTRA_USB_BAUD_RATE, DEFAULT_USB_BAUD_RATE); // Set default baud rate to 57600
@@ -243,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             ConnectionParameter connectionParams = new ConnectionParameter(selectedConnectionType, extraParams, null);
             this.drone.connect(connectionParams);
         }
-
     }
 
     // UI updating
@@ -261,20 +272,29 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void updateAltitude() {
         TextView altitudeTextView = (TextView) findViewById(R.id.altitudeValueTextView);
         Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
+        setAltura(String.valueOf(droneAltitude.getAltitude()));
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
+        //Enviar datos al servidor
+       // httpHandler handler = new httpHandler();
+       // handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
     }
 
     protected void updateSpeed() {
         TextView speedTextView = (TextView) findViewById(R.id.speedValueTextView);
         Speed droneSpeed = this.drone.getAttribute(AttributeType.SPEED);
+        setVelocidad(String.valueOf(droneSpeed.getGroundSpeed()));
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
+        //Enviar datos al servidor
+        //httpHandler handler = new httpHandler();
+        //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
     }
 
     protected void updateGPS() {
         TextView distanceTextView = (TextView) findViewById(R.id.distanceValueTextView);
         Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
         LatLong vehiclePosition = droneGps.getPosition();
-
+        setLatitud(String.valueOf(vehiclePosition.getLatitude()));
+        setLongitud(String.valueOf(vehiclePosition.getLongitude()));
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
     }
 
@@ -360,4 +380,37 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         });
     }
 
+    //MÉTODOS SET Y GET DE LOS DATOS A OBTENER DEL DRONE
+
+    public String getLatitud( ){
+        return this.latitud;
+    }
+
+    public void setLatitud(String latitud){
+        this.latitud = latitud;
+    }
+
+    public String getLongitud( ){
+        return this.longitud;
+    }
+
+    public void setLongitud(String longitud){
+        this.longitud = longitud;
+    }
+
+    public String getAltura( ){
+        return this.altura;
+    }
+
+    public void setAltura(String altura){
+        this.altura = altura;
+    }
+
+    public String getVelocidad( ){
+        return this.velocidad;
+    }
+
+    public void setVelocidad(String velocidad){
+        this.velocidad = velocidad;
+    }
 }
