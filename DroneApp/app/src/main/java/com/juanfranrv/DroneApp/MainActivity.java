@@ -241,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
 
             //Enviar datos al servidor
-            httpHandler handler = new httpHandler();
-            handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", "12", "12", "10", "10");
+            //httpHandler handler = new httpHandler();
+            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", "13", "12", "14", "10");
             //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
 
             Bundle extraParams = new Bundle();
@@ -275,8 +275,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         setAltura(String.valueOf(droneAltitude.getAltitude()));
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
         //Enviar datos al servidor
-       // httpHandler handler = new httpHandler();
-       // handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
+        httpHandler handler = new httpHandler();
+        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
     }
 
     protected void updateSpeed() {
