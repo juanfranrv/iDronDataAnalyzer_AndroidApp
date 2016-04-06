@@ -16,7 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 public class httpHandler {
 
-    public void post(String posturl, String latitud, String longitud, String altura, String velocidad){
+    public void post(String posturl, String token, String latitude, String longitude, String altitude, String speed){
         try {
 
             HttpClient httpclient = new DefaultHttpClient();
@@ -26,10 +26,11 @@ public class httpHandler {
             //El objeto HttpPost permite que enviemos una peticion de tipo POST a una URL especificada
             //AÑADIR PARAMETROS
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("latitud", latitud));
-            params.add(new BasicNameValuePair("longitud", longitud));
-            params.add(new BasicNameValuePair("altura", altura));
-            params.add(new BasicNameValuePair("velocidad", velocidad));
+            params.add(new BasicNameValuePair("token", token));
+            params.add(new BasicNameValuePair("latitud", latitude));
+            params.add(new BasicNameValuePair("longitud", longitude));
+            params.add(new BasicNameValuePair("altura", altitude));
+            params.add(new BasicNameValuePair("velocidad", speed));
 
             httppost.setEntity(new UrlEncodedFormEntity(params));
             //Enviamos la info al server
@@ -39,7 +40,7 @@ public class httpHandler {
 
         catch(Exception e) {
             e.printStackTrace();
-            System.out.println("No funciona");
+            System.out.println("Not working");
         }
 
     }

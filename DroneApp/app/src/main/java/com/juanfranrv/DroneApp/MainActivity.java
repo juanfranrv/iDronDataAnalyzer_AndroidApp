@@ -1,6 +1,8 @@
 package com.juanfranrv.DroneApp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String latitud, longitud, altura, velocidad;
+    private String latitude, longitude, altitude, speed;
     private Drone drone;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
@@ -75,21 +77,16 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         this.controlTower = new ControlTower(context);
         this.drone = new Drone(context);
 
-        //Captura la foto usando la GoPro del drone
-        final Button takePic = (Button) findViewById(R.id.take_photo_button);
-        takePic.setOnClickListener(new View.OnClickListener() {
+        final Button logout = (Button) findViewById(R.id.buttonLogout);
+        logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePhoto();
-            }
-        });
+                SharedPreferences preferences = getSharedPreferences("temp", getApplicationContext().MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("token", "");
+                editor.commit();
 
-        //Configura la camara GoPro del drone para comenzar el streaming
-        final Button toggleVideo = (Button) findViewById(R.id.toggle_video_recording);
-        toggleVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleVideoRecording();
+                openProfile();
             }
         });
 
@@ -97,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         videoView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                alertUser("La reproducción de video está disponible");
                 startVideoStream.setEnabled(true);
             }
 
@@ -124,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         startVideoStream.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertUser("Comenzar videostream");
+                alertUser("Start videostream");
                 startVideoStream(new Surface(videoView.getSurfaceTexture()));
             }
         });
@@ -135,10 +131,15 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         stopVideoStream.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertUser("Parar videostream");
+                alertUser("Stop videostream");
                 stopVideoStream();
             }
         });
+    }
+
+    private void openProfile(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -164,14 +165,14 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     @Override
     public void onTowerConnected() {
-        alertUser("Servicios 3DR conectados");
+        alertUser("3DR services connected");
         this.controlTower.registerDrone(this.drone, this.handler);
         this.drone.registerDroneListener(this);
     }
 
     @Override
     public void onTowerDisconnected() {
-        alertUser("Servicios 3DR interrumpidos");
+        alertUser("3DR services stopped");
     }
 
     // Drone Listener
@@ -182,13 +183,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
         switch (event) {
             case AttributeEvent.STATE_CONNECTED:
-                alertUser("Drone Conectado");
+                alertUser("Drone connected");
                 updateConnectedButton(this.drone.isConnected());
-                checkSoloState();
                 break;
 
             case AttributeEvent.STATE_DISCONNECTED:
-                alertUser("Drone Desconectado");
+                alertUser("Drone disconnected");
                 updateConnectedButton(this.drone.isConnected());
                 break;
 
@@ -211,18 +211,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     }
 
-    private void checkSoloState() {
-        final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
-        if (soloState == null) {
-            alertUser("Imposible comprobar el estado del solo");
-        } else {
-            alertUser("Estado del solo listo.");
-        }
-    }
-
     @Override
     public void onDroneConnectionFailed(ConnectionResult result) {
-        alertUser("Conexión fallida" + result.getErrorMessage());
+        alertUser("Connection failed " + result.getErrorMessage());
     }
 
     @Override
@@ -242,8 +233,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
             //Enviar datos al servidor
             //httpHandler handler = new httpHandler();
-            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", "13", "12", "14", "10");
-            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
+            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), "5", "10", "15", "20");
 
             Bundle extraParams = new Bundle();
             if (selectedConnectionType == ConnectionType.TYPE_USB) {
@@ -263,26 +253,26 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void updateConnectedButton(Boolean isConnected) {
         Button connectButton = (Button) findViewById(R.id.btnConnect);
         if (isConnected) {
-            connectButton.setText("Desconectado");
+            connectButton.setText("Disconnect");
         } else {
-            connectButton.setText("Conectado");
+            connectButton.setText("Connect");
         }
     }
 
     protected void updateAltitude() {
         TextView altitudeTextView = (TextView) findViewById(R.id.altitudeValueTextView);
         Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
-        setAltura(String.valueOf(droneAltitude.getAltitude()));
+        setAltitude(String.valueOf(droneAltitude.getAltitude()));
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
         //Enviar datos al servidor
         httpHandler handler = new httpHandler();
-        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
+        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     protected void updateSpeed() {
         TextView speedTextView = (TextView) findViewById(R.id.speedValueTextView);
         Speed droneSpeed = this.drone.getAttribute(AttributeType.SPEED);
-        setVelocidad(String.valueOf(droneSpeed.getGroundSpeed()));
+        setSpeed(String.valueOf(droneSpeed.getGroundSpeed()));
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
         //Enviar datos al servidor
         //httpHandler handler = new httpHandler();
@@ -293,8 +283,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         TextView distanceTextView = (TextView) findViewById(R.id.distanceValueTextView);
         Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
         LatLong vehiclePosition = droneGps.getPosition();
-        setLatitud(String.valueOf(vehiclePosition.getLatitude()));
-        setLongitud(String.valueOf(vehiclePosition.getLongitude()));
+        setLatitude(String.valueOf(vehiclePosition.getLatitude()));
+        setLongitude(String.valueOf(vehiclePosition.getLongitude()));
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
     }
 
@@ -304,44 +294,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void alertUser(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         Log.d(TAG, message);
-    }
-
-    private void takePhoto() {
-        SoloCameraApi.getApi(drone).takePhoto(new AbstractCommandListener() {
-            @Override
-            public void onSuccess() {
-                alertUser("Foto capturada.");
-            }
-
-            @Override
-            public void onError(int executionError) {
-                alertUser("Error mientras se realiza la foto: " + executionError);
-            }
-
-            @Override
-            public void onTimeout() {
-                alertUser("Timeout mientras se realiza la foto");
-            }
-        });
-    }
-
-    private void toggleVideoRecording() {
-        SoloCameraApi.getApi(drone).toggleVideoRecording(new AbstractCommandListener() {
-            @Override
-            public void onSuccess() {
-                alertUser("Grabando video.");
-            }
-
-            @Override
-            public void onError(int executionError) {
-                alertUser("Error mientras se graba video: " + executionError);
-            }
-
-            @Override
-            public void onTimeout() {
-                alertUser("Timeout mientras se graba video.");
-            }
-        });
     }
 
     private void startVideoStream(Surface videoSurface) {
@@ -357,12 +309,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
             @Override
             public void onError(int executionError) {
-                alertUser("Error mientras comienza el streaming: " + executionError);
+                alertUser("Error while starting streaming: " + executionError);
             }
 
             @Override
             public void onTimeout() {
-                alertUser("Timed out mientras esperamos al comienzo del streaming.");
+                alertUser("Timed out while waiting streaming.");
             }
         });
     }
@@ -382,35 +334,35 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     //MÉTODOS SET Y GET DE LOS DATOS A OBTENER DEL DRONE
 
-    public String getLatitud( ){
-        return this.latitud;
+    public String getLatitude( ){
+        return this.latitude;
     }
 
-    public void setLatitud(String latitud){
-        this.latitud = latitud;
+    public void setLatitude(String latitude){
+        this.latitude = latitude;
     }
 
-    public String getLongitud( ){
-        return this.longitud;
+    public String getLongitude( ){
+        return this.longitude;
     }
 
-    public void setLongitud(String longitud){
-        this.longitud = longitud;
+    public void setLongitude(String longitude){
+        this.longitude = longitude;
     }
 
-    public String getAltura( ){
-        return this.altura;
+    public String getAltitude( ){
+        return this.altitude;
     }
 
-    public void setAltura(String altura){
-        this.altura = altura;
+    public void setAltitude(String altitude){
+        this.altitude = altitude;
     }
 
-    public String getVelocidad( ){
-        return this.velocidad;
+    public String getSpeed( ){
+        return this.speed;
     }
 
-    public void setVelocidad(String velocidad){
-        this.velocidad = velocidad;
+    public void setSpeed(String speed){
+        this.speed = speed;
     }
 }
