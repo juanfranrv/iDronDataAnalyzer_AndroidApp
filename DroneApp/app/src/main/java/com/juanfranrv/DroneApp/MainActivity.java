@@ -231,10 +231,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             Spinner connectionSelector = (Spinner) findViewById(R.id.selectConnectionType);
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
 
-            //Enviar datos al servidor
-            //httpHandler handler = new httpHandler();
-            //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), "5", "10", "15", "20");
-
             Bundle extraParams = new Bundle();
             if (selectedConnectionType == ConnectionType.TYPE_USB) {
                 extraParams.putInt(ConnectionType.EXTRA_USB_BAUD_RATE, DEFAULT_USB_BAUD_RATE); // Set default baud rate to 57600
@@ -265,8 +261,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         setAltitude(String.valueOf(droneAltitude.getAltitude()));
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
         //Enviar datos al servidor
-        httpHandler handler = new httpHandler();
-        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
+        //httpHandler handler = new httpHandler();
+        //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     protected void updateSpeed() {
@@ -274,9 +270,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         Speed droneSpeed = this.drone.getAttribute(AttributeType.SPEED);
         setSpeed(String.valueOf(droneSpeed.getGroundSpeed()));
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
-        //Enviar datos al servidor
-        //httpHandler handler = new httpHandler();
-        //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", getLatitud(), getLongitud(), getAltura(), getVelocidad());
     }
 
     protected void updateGPS() {
@@ -286,6 +279,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         setLatitude(String.valueOf(vehiclePosition.getLatitude()));
         setLongitude(String.valueOf(vehiclePosition.getLongitude()));
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
+        //Enviar datos al servidor
+        httpHandler handler = new httpHandler();
+        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     // Métodos de ayuda

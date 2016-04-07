@@ -34,7 +34,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/connectionTypeLabel"
                     android:onClick="onBtnConnectTap"
-                    android:text="Conectar" />
+                    android:text="Connect" />
 
                 <Spinner
                     android:id="@+id/selectConnectionType"
@@ -54,7 +54,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
-                    android:text="Tipo de conexión"
+                    android:text="Connection Types"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </RelativeLayout>
@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="Telemetría del drone"
+                    android:text="Drone Telemetry"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TableLayout
@@ -103,7 +103,7 @@
                             android:layout_column="0"
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
-                            android:text="Altitud:"
+                            android:text="Altitude:"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
@@ -130,7 +130,7 @@
                             android:layout_column="0"
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
-                            android:text="Velocidad:"
+                            android:text="Speed:"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
@@ -157,7 +157,7 @@
                             android:layout_column="0"
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
-                            android:text="GPS:"
+                            android:text="Lat/Long:"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
