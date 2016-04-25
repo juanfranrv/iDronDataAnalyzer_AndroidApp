@@ -12,8 +12,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,38 +20,26 @@ import android.widget.Toast;
 
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
-import com.o3dr.android.client.apis.ControlApi;
-import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.apis.solo.SoloCameraApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.TowerListener;
 import com.o3dr.services.android.lib.coordinate.LatLong;
-import com.o3dr.services.android.lib.coordinate.LatLongAlt;
 import com.o3dr.services.android.lib.drone.attribute.AttributeEvent;
 import com.o3dr.services.android.lib.drone.attribute.AttributeType;
-import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
-import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionResult;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
 import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Gps;
-import com.o3dr.services.android.lib.drone.property.Home;
 import com.o3dr.services.android.lib.drone.property.Speed;
-import com.o3dr.services.android.lib.drone.property.State;
-import com.o3dr.services.android.lib.drone.property.Type;
-import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
-
-import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements DroneListener, TowerListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String latitude, longitude, altitude, speed;
+    private String latitude = Integer.toString(0), longitude = Integer.toString(0), altitude = Integer.toString(0), speed = Integer.toString(0);
     private Drone drone;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
@@ -73,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             StrictMode.setThreadPolicy(policy);
         }
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
         this.drone = new Drone(context);
@@ -85,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("token", "");
                 editor.commit();
+
+                //Detener hebra asynctask
+                httpHandler handler = new httpHandler();
+                handler.stopPostData();
 
                 openProfile();
             }
@@ -158,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
         this.controlTower.unregisterDrone(this.drone);
         this.controlTower.disconnect();
+        //Detener hebra asynctask
+        httpHandler handler = new httpHandler();
+        handler.stopPostData();
     }
 
     // 3DR Services Listener
@@ -221,12 +217,17 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     }
 
-    // UI Events
+    // Eventos UI
     // ==========================================================
 
     public void onBtnConnectTap(View view) {
         if (this.drone.isConnected()) {
             this.drone.disconnect();
+
+            //Detener hebra asynctask al desconectarse
+            httpHandler handler = new httpHandler();
+            handler.stopPostData();
+
         } else {
             Spinner connectionSelector = (Spinner) findViewById(R.id.selectConnectionType);
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
@@ -260,9 +261,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
         setAltitude(String.valueOf(droneAltitude.getAltitude()));
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
-        //Enviar datos al servidor
-        //httpHandler handler = new httpHandler();
-        //handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     protected void updateSpeed() {
@@ -281,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
         //Enviar datos al servidor
         httpHandler handler = new httpHandler();
-        handler.post("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
+        handler.postData("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     // Métodos de ayuda
