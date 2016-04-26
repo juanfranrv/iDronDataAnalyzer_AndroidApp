@@ -19,6 +19,9 @@ import java.util.Map;
 
 public class VolleyHttpPost{
 
+    private VolleyRequestQueue volley;
+    protected RequestQueue fRequestQueue;
+
     public void postData(Context context, String posturl, final String token, final String latitude, final String longitude, final String altitude, final String speed) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, posturl,
@@ -47,8 +50,11 @@ public class VolleyHttpPost{
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(stringRequest);
+        //Llamada al singleton para crear una única cola en la que almacenar toda la información
+        volley = VolleyRequestQueue.getInstance(context);
+        fRequestQueue = volley.getRequestQueue();
+
+        fRequestQueue.add(stringRequest);
     }
 
 }

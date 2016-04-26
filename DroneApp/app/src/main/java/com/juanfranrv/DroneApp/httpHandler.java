@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+//Http post periodicos con asynctask. (SIN USAR). Actualmente usandose con volley.
+
 public class httpHandler {
 
     private MyAsyncTask mTask = new MyAsyncTask();
