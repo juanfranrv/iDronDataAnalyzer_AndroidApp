@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     private static final int DEFAULT_UDP_PORT = 14550;
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
+    VolleyHttpPost httpPost= new VolleyHttpPost();
 
     private Button startVideoStream;
     private Button stopVideoStream;
@@ -74,10 +75,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("token", "");
                 editor.commit();
-
-                //Detener hebra asynctask
-                httpHandler handler = new httpHandler();
-                handler.stopPostData();
 
                 openProfile();
             }
@@ -151,9 +148,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
         this.controlTower.unregisterDrone(this.drone);
         this.controlTower.disconnect();
-        //Detener hebra asynctask
-        httpHandler handler = new httpHandler();
-        handler.stopPostData();
     }
 
     // 3DR Services Listener
@@ -224,11 +218,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         if (this.drone.isConnected()) {
             this.drone.disconnect();
 
-            //Detener hebra asynctask al desconectarse
-            httpHandler handler = new httpHandler();
-            handler.stopPostData();
-
         } else {
+
             Spinner connectionSelector = (Spinner) findViewById(R.id.selectConnectionType);
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
 
@@ -278,8 +269,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         setLongitude(String.valueOf(vehiclePosition.getLongitude()));
         distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
         //Enviar datos al servidor
-        httpHandler handler = new httpHandler();
-        handler.postData("http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
+         httpPost.postData(this.getApplicationContext(),"http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
 
     // Métodos de ayuda
