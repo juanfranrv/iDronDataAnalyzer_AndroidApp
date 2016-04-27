@@ -22,7 +22,7 @@ public class VolleyHttpPost{
     private VolleyRequestQueue volley;
     protected RequestQueue fRequestQueue;
 
-    public void postData(Context context, String posturl, final String token, final String latitude, final String longitude, final String altitude, final String speed) {
+    public void postData(final Context context, String posturl, final String token, final String latitude, final String longitude, final String altitude, final String speed) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, posturl,
                 new Response.Listener<String>() {
@@ -34,7 +34,7 @@ public class VolleyHttpPost{
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(VolleyHttpPost.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(context,error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override

@@ -13,6 +13,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
+        android:background="@color/grey"
         tools:context=".MainActivity">
 
         <android.support.v7.widget.CardView
@@ -28,12 +29,14 @@
 
                 <Button
                     android:id="@+id/btnConnect"
-                    android:layout_width="150dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/connectionTypeLabel"
                     android:onClick="onBtnConnectTap"
+                    android:background="@drawable/button"
+                    style="@style/buttonStyle"
                     android:text="Connect" />
 
                 <Spinner
@@ -55,6 +58,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="10dp"
                     android:text="Connection Types"
+                    style="@style/shadoweffect"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </RelativeLayout>
@@ -78,6 +82,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
                     android:text="Drone Telemetry"
+                    style="@style/shadoweffect"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TableLayout
@@ -98,12 +103,13 @@
 
                         <TextView
                             android:id="@+id/altitudeLabelTextView"
-                            android:layout_width="100dp"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:layout_column="0"
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
                             android:text="Altitude:"
+                            style="@style/textBold"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
@@ -131,6 +137,7 @@
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
                             android:text="Speed:"
+                            style="@style/textBold"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
@@ -158,6 +165,7 @@
                             android:paddingBottom="5dp"
                             android:paddingTop="5dp"
                             android:text="Lat/Long:"
+                            style="@style/textBold"
                             android:textAppearance="?android:attr/textAppearanceMedium" />
 
                         <TextView
@@ -182,12 +190,77 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
                         <Button
-                            android:layout_width="wrap_content"
+                            style="@style/buttonStyle"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:text="Log out"
                             android:id="@+id/buttonLogout"
-                            android:layout_column="1" />
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/button"
+                            android:layout_column="0" />
                     </TableRow>
 
                 </TableLayout>

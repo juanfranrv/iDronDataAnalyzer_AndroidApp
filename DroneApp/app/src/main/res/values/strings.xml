@@ -4,7 +4,7 @@
     <string name="app_name">DroneApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <color name="grey">#848484</color>
     <string-array name="drone_connection_types">
         <item>USB</item>
         <item>UDP</item>
