@@ -2,12 +2,9 @@ package com.juanfranrv.DroneApp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,15 +13,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener  {
 
@@ -35,7 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText editTextUsername;
     private EditText editTextPassword;
-    private Button buttonLogin;
+    private FancyButton buttonLogin;
 
     private String username;
     private String password;
@@ -48,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
-        buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        buttonLogin = (FancyButton) findViewById(R.id.buttonLogin);
 
         buttonLogin.setOnClickListener(this);
 
