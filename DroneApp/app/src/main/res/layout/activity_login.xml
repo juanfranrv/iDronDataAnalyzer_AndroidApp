@@ -1,48 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:float="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:orientation="vertical"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.juanfranrv.DroneApp.LoginActivity"
-    android:weightSum="1">
+    tools:context="com.juanfranrv.DroneApp.LoginActivity">
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="103dp"
+    <com.github.siyamed.shapeimageview.CircularImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@mipmap/ic_drone"
-        android:layout_marginBottom="50dp"
-        android:id="@+id/imageView" />
+        android:layout_gravity="center"
+        app:siBorderWidth="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:siBorderColor="#000000"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter Username"
-        />
+        float:fletPaddingLeft="55dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:left="10dp"
+            android:drawableLeft="@drawable/user"
+            android:drawablePadding="20dp"
+            android:id="@+id/editTextUsername" />
+
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+
+    <com.wrapp.floatlabelededittext.FloatLabeledEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        float:fletPaddingLeft="55dp">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editTextUsername" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Password"
-        />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:drawableLeft="@drawable/password"
+        android:drawablePadding="20dp"
+        android:inputType="textPassword"
         android:id="@+id/editTextPassword" />
 
-    <Button
-        android:layout_width="match_parent"
+    </com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/buttonLogin"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/buttonLogin" />
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="#000000"
+        fancy:fb_focusColor="#01111F"
+        fancy:fb_fontIconResource="&#xf007;"
+        fancy:fb_iconPosition="left"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="Login"
+        fancy:fb_textColor="#FFFFFF" />
+
 
 </LinearLayout>

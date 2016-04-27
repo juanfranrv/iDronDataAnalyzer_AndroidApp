@@ -26,4 +26,10 @@ dependencies {
     compile 'com.o3dr.android:dronekit-android:2.7.0'
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
+    compile 'com.github.medyo:fancybuttons:1.7'
+    compile 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+
+
+
 }
