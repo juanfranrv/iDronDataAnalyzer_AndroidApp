@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
+        /*if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-        }
+        }*/
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         LatLong vehiclePosition = droneGps.getPosition();
         setLatitude(String.valueOf(vehiclePosition.getLatitude()));
         setLongitude(String.valueOf(vehiclePosition.getLongitude()));
-        distanceTextView.setText(String.format("%.2f", vehiclePosition.getLatitude()) + " | " + String.format("%.2f", vehiclePosition.getLongitude()));
+        distanceTextView.setText(String.format("%.4f", vehiclePosition.getLatitude()) + " | " + String.format("%.4f", vehiclePosition.getLongitude()));
         //Enviar datos al servidor
          httpPost.postData(this.getApplicationContext(),"http://idrondataanalyzer.appspot.com/recibirDatosDrone", Service.getToken(), getLatitude(), getLongitude(), getAltitude(), getSpeed());
     }
